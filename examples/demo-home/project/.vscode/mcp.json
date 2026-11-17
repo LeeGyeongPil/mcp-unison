@@ -1,0 +1,19 @@
+{
+  // Practice mock VS Code MCP file (JSONC: comments are allowed).
+  "inputs": [
+    { "id": "token", "type": "promptString", "description": "API token", "password": true }
+  ],
+  "servers": {
+    "vs-only": {
+      "type": "http",
+      "url": "https://vs.example.invalid/mcp",
+      "headers": { "Authorization": "Bearer ${input:token}" }
+    },
+    "vs-env": {
+      "command": "node",
+      "args": ["${workspaceFolder}/server.js"],
+      "env": { "API_BASE": "${env:API_BASE}" },
+      "envFile": "${workspaceFolder}/.env"
+    }
+  }
+}

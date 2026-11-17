@@ -1,0 +1,12 @@
+# Practice mock Codex config: fake servers only.
+[mcp_servers.search]
+command = "npx"
+args = ["-y", "@example/search-server"]
+env_vars = ["SEARCH_API_KEY"]
+
+[mcp_servers.docs]
+command = "docs-from-codex"
+
+[mcp_servers.old]
+command = "old-server"
+enabled = false

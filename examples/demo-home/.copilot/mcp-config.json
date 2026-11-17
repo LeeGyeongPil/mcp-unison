@@ -1,0 +1,16 @@
+{
+  "mcpServers": {
+    "docs": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@example/docs-server", "--legacy"],
+      "tools": ["*"]
+    },
+    "my-own": {
+      "type": "stdio",
+      "command": "my-own-server",
+      "tools": ["*"]
+    }
+  },
+  "trustedFolders": ["/example/keep-me"]
+}

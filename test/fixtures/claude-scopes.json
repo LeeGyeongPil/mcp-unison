@@ -1,0 +1,14 @@
+{
+  "numStartups": 3,
+  "mcpServers": {
+    "shared": { "command": "npx", "args": ["-y", "user-version"], "env": { "FROM_USER": "1" } },
+    "user-only": { "command": "user-only-server" }
+  },
+  "projects": {
+    "/Work/Demo/": {
+      "mcpServers": {
+        "shared": { "command": "node", "args": ["local-version.js"] }
+      }
+    }
+  }
+}

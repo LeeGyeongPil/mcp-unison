@@ -1,0 +1,43 @@
+{
+  "numStartups": 12,
+  "mcpServers": {
+    "files": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@example/files-server", "${HOME}/notes"]
+    },
+    "docs": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@example/docs-server"]
+    },
+    "github": {
+      "type": "http",
+      "url": "https://mcp.example.invalid/github",
+      "headers": { "Authorization": "Bearer ${GITHUB_TOKEN}" }
+    },
+    "proxy-api": {
+      "type": "http",
+      "url": "https://api.example.invalid/mcp",
+      "headers": { "X-Registry-Token": "${NPM_TOKEN}" }
+    },
+    "legacy-sse": {
+      "type": "sse",
+      "url": "https://sse.example.invalid/stream"
+    },
+    "bad-url": {
+      "url": "https://bad.example.invalid/mcp"
+    }
+  },
+  "projects": {
+    "__DEMO_PROJECT__": {
+      "mcpServers": {
+        "files": {
+          "command": "node",
+          "args": ["server.js"],
+          "env": { "LEVEL": "${LOG_LEVEL:-info}" }
+        }
+      }
+    }
+  }
+}
