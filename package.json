@@ -2,7 +2,7 @@
   "name": "mcp-unison",
   "displayName": "MCP Unison",
   "description": "Use the MCP servers you registered in Claude Code or Codex from VS Code chat (Copilot) without copying them by hand.",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "publisher": "leegyeongpil",
   "license": "MIT",
   "repository": {

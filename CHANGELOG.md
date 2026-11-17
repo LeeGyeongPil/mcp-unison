@@ -3,6 +3,12 @@
 All notable changes to this project are documented here.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses [Semantic Versioning](https://semver.org/).
 
+## [0.1.3] - 2026-11-18
+
+### Fixed
+
+- An explicit `--home` or `--project` that does not exist or is not a folder now exits 2 with a message naming the path, instead of reporting "in sync" with exit 0.
+
 ## [0.1.2] - 2026-11-18
 
 ### Fixed
