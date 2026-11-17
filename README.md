@@ -29,10 +29,10 @@ The extension is not on a marketplace yet. Build the package from a clone and in
 git clone https://github.com/LeeGyeongPil/mcp-unison.git
 cd mcp-unison
 npm install
-npm run package          # writes mcp-unison-0.1.1.vsix
+npm run package          # writes mcp-unison-0.1.3.vsix
 ```
 
-Then in VS Code run **Extensions: Install from VSIX...** and pick `mcp-unison-0.1.1.vsix`.
+Then in VS Code run **Extensions: Install from VSIX...** and pick `mcp-unison-0.1.3.vsix`.
 
 The CLI works from the same clone:
 
@@ -244,8 +244,8 @@ mcp-unison <command> [options]
 
 | Option | Applies to | Meaning |
 |---|---|---|
-| `--home <dir>` | all | Use this folder as the home folder (overrides `CODEX_HOME`, `COPILOT_HOME`) |
-| `--project <dir>` | all | Project folder (default: current folder) |
+| `--home <dir>` | all | Use this folder as the home folder (overrides `CODEX_HOME`, `COPILOT_HOME`). Must be an existing folder, otherwise exit 2 naming the path |
+| `--project <dir>` | all | Project folder (default: current folder). Must be an existing folder, otherwise exit 2 naming the path |
 | `--json` | all | Machine-readable output |
 | `--demo` | all | Run on a throwaway copy of the sample home (practice mock mode) |
 | `--check` | `diff` | Exit 1 when drift exists |
@@ -255,7 +255,7 @@ mcp-unison <command> [options]
 | `--lang <en\|ko>` | all | Output language |
 | `-h`, `--help`, `-v`, `--version` | | Help, version |
 
-Exit codes: `0` ok; `1` drift (`diff --check`) or conflict (`sync-copilot --write`); `2` usage error or a source file that cannot be parsed (the message names the file, line and column).
+Exit codes: `0` ok; `1` drift (`diff --check`) or conflict (`sync-copilot --write`); `2` usage error (including a `--home` or `--project` folder that does not exist or is not a folder) or a source file that cannot be parsed (the message names the file, line and column).
 
 `--json` top-level fields: `list` and `diff` give `servers` and `warnings`; `sync-copilot` gives `changed`, `written`, `actions`, `conflicts`, `diff`, `warnings`; `export-claude` gives `format`, `text`, `exported`, `excluded`, `warnings`. Each warning has `code`, `server`, `message` and, when relevant, `field` and `detail`.
 
@@ -288,13 +288,13 @@ Exit codes: `0` ok; `1` drift (`diff --check`) or conflict (`sync-copilot --writ
 | `W_BLOCKED_SECRET_VAR` | Credential variable inside a remote `url` or `headers` | Intentional (same as Claude Code). Use a stdio `env` instead |
 | `sync-copilot` keeps my entry with `W_COPILOT_ENTRY_EXISTS` | An entry with that name already exists and was not created by this tool | Rename or remove it, then sync again |
 | `--write` exits 1 with CONFLICT | You edited a managed entry by hand | Review the diff, remove it from `mcp-unison.lock.json` or revert your edit |
-| Exit 2 | A source file failed to parse | Fix the file named in the error |
+| Exit 2 | A source file failed to parse, or an explicit `--home`/`--project` folder does not exist | Fix the file named in the error, or the folder path |
 
 ## Development
 
 ```bash
 npm install
-npm test                      # tsc, then 90 tests; no keys or network needed
+npm test                      # tsc, then 92 tests; no keys or network needed
 npm run package               # builds the .vsix
 node scripts/check-vsix.mjs   # prints "vsix ok"
 npm run test:integration      # real VS Code; needs a display (CI uses xvfb)

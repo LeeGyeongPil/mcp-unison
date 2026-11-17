@@ -29,10 +29,10 @@ Claude Code나 Codex에 이미 등록한 MCP 서버를 VS Code 채팅(Copilot)�
 git clone https://github.com/LeeGyeongPil/mcp-unison.git
 cd mcp-unison
 npm install
-npm run package          # mcp-unison-0.1.1.vsix 를 만듭니다
+npm run package          # mcp-unison-0.1.3.vsix 를 만듭니다
 ```
 
-VS Code에서 **Extensions: Install from VSIX...** 를 실행하고 `mcp-unison-0.1.1.vsix` 를 고릅니다.
+VS Code에서 **Extensions: Install from VSIX...** 를 실행하고 `mcp-unison-0.1.3.vsix` 를 고릅니다.
 
 CLI는 같은 clone에서 쓸 수 있습니다.
 
@@ -242,8 +242,8 @@ mcp-unison <명령> [옵션]
 
 | 옵션 | 대상 | 뜻 |
 |---|---|---|
-| `--home <폴더>` | 전체 | 이 폴더를 홈으로 사용(`CODEX_HOME`, `COPILOT_HOME` 보다 우선) |
-| `--project <폴더>` | 전체 | 프로젝트 폴더(기본: 현재 폴더) |
+| `--home <폴더>` | 전체 | 이 폴더를 홈으로 사용(`CODEX_HOME`, `COPILOT_HOME` 보다 우선). 존재하는 폴더여야 하며 아니면 경로를 밝히고 종료 2 |
+| `--project <폴더>` | 전체 | 프로젝트 폴더(기본: 현재 폴더). 존재하는 폴더여야 하며 아니면 경로를 밝히고 종료 2 |
 | `--json` | 전체 | 기계가 읽는 출력 |
 | `--demo` | 전체 | 예시 홈의 임시 복사본에서 실행(연습용 목 모드) |
 | `--check` | `diff` | 드리프트가 있으면 종료 1 |
@@ -253,7 +253,7 @@ mcp-unison <명령> [옵션]
 | `--lang <en\|ko>` | 전체 | 출력 언어 |
 | `-h`, `--help`, `-v`, `--version` | | 도움말, 버전 |
 
-종료 코드: `0` 정상, `1` 드리프트(`diff --check`) 또는 충돌(`sync-copilot --write`), `2` 사용법 오류 또는 파싱할 수 없는 원본 파일(메시지에 파일·줄·열이 나옴).
+종료 코드: `0` 정상, `1` 드리프트(`diff --check`) 또는 충돌(`sync-copilot --write`), `2` 사용법 오류(없거나 폴더가 아닌 `--home`·`--project` 포함) 또는 파싱할 수 없는 원본 파일(메시지에 파일·줄·열이 나옴).
 
 `--json` 최상위 필드: `list`·`diff` 는 `servers`, `warnings`. `sync-copilot` 은 `changed`, `written`, `actions`, `conflicts`, `diff`, `warnings`. `export-claude` 는 `format`, `text`, `exported`, `excluded`, `warnings`. 경고마다 `code`, `server`, `message` 가 있고 필요하면 `field`, `detail` 이 붙습니다.
 
@@ -286,13 +286,13 @@ mcp-unison <명령> [옵션]
 | `W_BLOCKED_SECRET_VAR` | 원격 `url`·`headers` 안의 자격 변수 | 의도된 동작(Claude Code와 같음). stdio `env` 를 쓰세요 |
 | `sync-copilot` 이 내 항목을 `W_COPILOT_ENTRY_EXISTS` 로 남김 | 같은 이름 항목이 이미 있고 이 도구가 만든 것이 아님 | 이름을 바꾸거나 지운 뒤 다시 동기화 |
 | `--write` 가 CONFLICT 로 종료 1 | 관리 항목을 손으로 고침 | diff를 확인하고 `mcp-unison.lock.json` 에서 빼거나 고친 내용을 되돌림 |
-| 종료 코드 2 | 원본 파일 파싱 실패 | 오류에 적힌 파일을 고침 |
+| 종료 코드 2 | 원본 파일 파싱 실패, 또는 명시한 `--home`·`--project` 폴더가 없음 | 오류에 적힌 파일 또는 폴더 경로를 고침 |
 
 ## 개발·기여
 
 ```bash
 npm install
-npm test                      # tsc 후 테스트 90개, 키·네트워크 불필요
+npm test                      # tsc 후 테스트 92개, 키·네트워크 불필요
 npm run package               # .vsix 를 만듭니다
 node scripts/check-vsix.mjs   # "vsix ok" 출력
 npm run test:integration      # 실제 VS Code, 화면 필요(CI는 xvfb)
