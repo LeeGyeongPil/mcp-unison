@@ -1,0 +1,13 @@
+{
+  "command.refresh": "Refresh MCP servers",
+  "command.syncCopilot": "Sync to Copilot config",
+  "command.showDrift": "Show drift report",
+  "command.exportClaude": "Export VS Code servers for Claude Code",
+  "command.showInCopilotSessions": "Show in Copilot sessions",
+  "command.chooseLanguage": "Choose Language",
+  "config.sources.claude": "Offer the MCP servers from Claude Code (~/.claude.json, project .mcp.json).",
+  "config.sources.codex": "Offer the MCP servers from Codex (config.toml).",
+  "config.copilotSync": "What to do when a source changes and the Copilot config no longer matches: off, ask (notify), or auto (write managed entries).",
+  "config.blockedRemoteVars": "Extra credential variable names that read as empty strings inside the url and headers of remote servers (the built-in list follows the Claude Code documentation).",
+  "config.language": "Display language of MCP Unison messages: auto follows the editor, or choose en / ko."
+}

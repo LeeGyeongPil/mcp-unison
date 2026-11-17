@@ -1,0 +1,11 @@
+**
+!out/src/**
+!package.json
+!package.nls.json
+!package.nls.ko.json
+!README.md
+!README.ko.md
+!CHANGELOG.md
+!LICENSE
+!node_modules/smol-toml/**
+!node_modules/jsonc-parser/**

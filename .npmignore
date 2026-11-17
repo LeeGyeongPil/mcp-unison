@@ -1,0 +1,13 @@
+# vsce rejects a package.json "files" list next to .vscodeignore, so the npm package
+# contents are controlled here instead: compiled sources + examples/demo-home are published.
+test/
+out/test/
+scripts/
+.github/
+.vscode-test/
+.vscodeignore
+tsconfig.json
+*.vsix
+SECURITY.md
+/docs/
+/src/
