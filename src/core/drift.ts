@@ -96,7 +96,7 @@ export function computeDrift(set: SourceSet, opts: DriftOptions): DriftReport {
     if (seen.has(name)) continue;
     rows.push({ name, sources: { vscode: true }, status: "only-vscode", warnings: [] });
   }
-  rows.sort((a, b) => a.name.localeCompare(b.name));
+  rows.sort((a, b) => a.name.localeCompare(b.name, "en")); // fixed locale: same order on every machine
   return { merged, desired, rows, warnings };
 }
 

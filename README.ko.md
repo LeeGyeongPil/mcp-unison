@@ -292,7 +292,7 @@ mcp-unison <명령> [옵션]
 
 ```bash
 npm install
-npm test                      # tsc 후 테스트 87개, 키·네트워크 불필요
+npm test                      # tsc 후 테스트 90개, 키·네트워크 불필요
 npm run package               # .vsix 를 만듭니다
 node scripts/check-vsix.mjs   # "vsix ok" 출력
 npm run test:integration      # 실제 VS Code, 화면 필요(CI는 xvfb)

@@ -7,7 +7,10 @@ import { createShim, installShim } from "./vscode-shim";
 
 const shim = createShim();
 const restore = installShim(shim);
-const savedEnv = { HOME: process.env.HOME, CODEX_HOME: process.env.CODEX_HOME, COPILOT_HOME: process.env.COPILOT_HOME };
+// The extension reads process.env. Variables the demo refers to are cleared too, so a machine
+// (or CI runner) that happens to export GITHUB_TOKEN or LOG_LEVEL sees the same result.
+const ENV_KEYS = ["HOME", "CODEX_HOME", "COPILOT_HOME", "GITHUB_TOKEN", "SEARCH_API_KEY", "LOG_LEVEL", "API_BASE", "NPM_TOKEN"];
+const savedEnv = Object.fromEntries(ENV_KEYS.map((k) => [k, process.env[k]]));
 const subscriptions: { dispose(): void }[] = [];
 let home = "";
 let project = "";
@@ -29,9 +32,8 @@ before(() => {
   const demo = copyDemo({ after: (fn) => cleanups.push(fn) });
   home = demo.home;
   project = demo.project;
+  for (const k of ENV_KEYS) delete process.env[k];
   process.env.HOME = home;
-  delete process.env.CODEX_HOME;
-  delete process.env.COPILOT_HOME;
   shim.folders = [{ uri: { fsPath: project } }];
   shim.config.debounceMs = 120;
   shim.config.pollMs = 50;
@@ -134,8 +136,9 @@ test("Sync to Copilot config shows a diff, asks, then writes only on Apply", asy
 });
 
 test("Show drift report opens a markdown document", async () => {
-  await shim.commands.get("mcpUnison.showDrift")!();
+  const returned = await shim.commands.get("mcpUnison.showDrift")!();
   const doc = shim.documents.at(-1)!;
+  assert.equal(returned, doc, "the command returns the document it opened");
   assert.equal(doc.language, "markdown");
   assert.match(doc.content, /# MCP Unison drift report/);
   assert.match(doc.content, /\| my-own \|/);
@@ -177,5 +180,38 @@ test("with no workspace folder the provider still answers from user scope", asyn
   } finally {
     process.env.HOME = savedHome;
     shim.folders = savedFolders;
+  }
+});
+
+/** Runs a command and fails (instead of hanging) if it does not finish within 3 seconds. */
+async function finishes(id: string): Promise<unknown> {
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  const limit = new Promise<never>((_, reject) => {
+    timer = setTimeout(() => reject(new Error(`${id} did not finish within 3 s`)), 3000);
+  });
+  try {
+    return await Promise.race([shim.commands.get(id)!(), limit]);
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+test("commands that only show a notification finish without waiting for it to be closed", async () => {
+  await finishes("mcpUnison.refresh");
+  await finishes("mcpUnison.showInCopilotSessions");
+  assert.match(shim.messages.at(-1)!.text, /MCP: List Servers/);
+});
+
+test("a broken source file shows an error notification and the command still finishes", async () => {
+  const claudeJson = path.join(home, ".claude.json");
+  const good = fs.readFileSync(claudeJson, "utf8");
+  fs.writeFileSync(claudeJson, "{ broken");
+  try {
+    assert.equal(await finishes("mcpUnison.showDrift"), undefined);
+    const last = shim.messages.at(-1)!;
+    assert.equal(last.kind, "error");
+    assert.ok(last.text.includes(".claude.json"), last.text);
+  } finally {
+    fs.writeFileSync(claudeJson, good);
   }
 });

@@ -294,7 +294,7 @@ Exit codes: `0` ok; `1` drift (`diff --check`) or conflict (`sync-copilot --writ
 
 ```bash
 npm install
-npm test                      # tsc, then 87 tests; no keys or network needed
+npm test                      # tsc, then 90 tests; no keys or network needed
 npm run package               # builds the .vsix
 node scripts/check-vsix.mjs   # prints "vsix ok"
 npm run test:integration      # real VS Code; needs a display (CI uses xvfb)

@@ -16,6 +16,8 @@ export interface Shim {
   answers: { message?: string; quickPick?: unknown };
   folders: { uri: { fsPath: string } }[];
   language: string;
+  /** What vscode.extensions.getExtension(id) returns, for running test/integration/suite.ts. */
+  extension?: { id: string; isActive: boolean; activate(): Promise<unknown> };
 }
 
 export function createShim(): Shim {
@@ -66,14 +68,19 @@ export function createShim(): Shim {
     ) {}
   }
 
-  const notify = (kind: string) => async (text: string, ...items: unknown[]) => {
+  // Like the real editor, a notification without buttons stays open until the user closes it,
+  // so its promise never settles here: a command that awaited one would hang, as it would in
+  // VS Code. With buttons, the one named in shim.answers.message is "clicked".
+  const notify = (kind: string) => (text: string, ...items: unknown[]): Promise<unknown> => {
     shim.messages.push({ kind, text, items });
+    const buttons = items.filter((i) => typeof i === "string");
+    if (buttons.length === 0) return new Promise(() => {});
     const wanted = shim.answers.message;
-    const flat = items.filter((i) => typeof i === "string");
-    return wanted !== undefined && flat.includes(wanted) ? wanted : undefined;
+    return Promise.resolve(wanted !== undefined && buttons.includes(wanted) ? wanted : undefined);
   };
 
   shim.api = {
+    version: "0.0.0-shim",
     EventEmitter,
     McpStdioServerDefinition,
     McpHttpServerDefinition,
@@ -93,7 +100,11 @@ export function createShim(): Shim {
         return { dispose: () => shim.providers.delete(id) };
       },
     },
+    extensions: {
+      getExtension: (id: string) => (shim.extension?.id === id ? shim.extension : undefined),
+    },
     commands: {
+      getCommands: async () => [...shim.commands.keys()],
       registerCommand: (id: string, fn: (...a: any[]) => any) => {
         shim.commands.set(id, fn);
         return { dispose: () => shim.commands.delete(id) };
@@ -122,13 +133,16 @@ export function createShim(): Shim {
       onDidChangeWorkspaceFolders: () => ({ dispose() {} }),
       onDidChangeConfiguration: () => ({ dispose() {} }),
       openTextDocument: async (opts: { content: string; language: string }) => {
-        shim.documents.push(opts);
-        return opts;
+        // Plus the two TextDocument members that test/integration/suite.ts reads.
+        const doc = { ...opts, languageId: opts.language, getText: () => opts.content };
+        shim.documents.push(doc);
+        return doc;
       },
     },
     window: {
       showInformationMessage: notify("info"),
       showWarningMessage: notify("warn"),
+      showErrorMessage: notify("error"),
       showQuickPick: async () => shim.answers.quickPick,
       showTextDocument: async () => undefined,
     },

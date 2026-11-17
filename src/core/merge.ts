@@ -85,7 +85,8 @@ export function mergeServers(set: SourceSet): MergeResult {
     }
     byName.set(spec.name, spec);
   }
-  const servers = [...byName.values()].sort((a, b) => a.name.localeCompare(b.name));
+  // A fixed collation locale keeps the order the same on every machine (LANG=C, ko_KR, ...).
+  const servers = [...byName.values()].sort((a, b) => a.name.localeCompare(b.name, "en"));
   for (const s of servers) warnings.push(...s.warnings);
   return { servers, warnings: dedupeWarnings(warnings) };
 }

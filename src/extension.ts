@@ -189,7 +189,9 @@ export function activate(context: vscode.ExtensionContext): void {
       } catch (err) {
         // A broken source file is reported in the chosen language instead of a raw error.
         if (!(err instanceof SourceError)) throw err;
-        await vscode.window.showErrorMessage(sourceErrorMessage(lang(), err));
+        // Not awaited: a notification without buttons settles only when the user closes it,
+        // so awaiting it would leave executeCommand callers (and the real-editor test) waiting.
+        void vscode.window.showErrorMessage(sourceErrorMessage(lang(), err));
         return undefined;
       }
     };
@@ -198,7 +200,8 @@ export function activate(context: vscode.ExtensionContext): void {
 
   reg("mcpUnison.refresh", async () => {
     changed.fire();
-    await vscode.window.showInformationMessage(msg("ext.refreshed"));
+    // Notifications without buttons are not awaited: they settle only when the user closes them.
+    void vscode.window.showInformationMessage(msg("ext.refreshed"));
   });
 
   reg("mcpUnison.syncCopilot", async () => {
@@ -206,9 +209,9 @@ export function activate(context: vscode.ExtensionContext): void {
     const plan = planCopilotSync(c.report.desired, c.set.copilot, readLock(c.set.paths.lockFile), c.set.paths);
     if (!plan.changed) {
       if (plan.conflicts.length > 0) {
-        await vscode.window.showWarningMessage(msg("ext.conflicts", { names: plan.conflicts.join(", ") }));
+        void vscode.window.showWarningMessage(msg("ext.conflicts", { names: plan.conflicts.join(", ") }));
       } else {
-        await vscode.window.showInformationMessage(msg("ext.noChanges"));
+        void vscode.window.showInformationMessage(msg("ext.noChanges"));
       }
       return;
     }
@@ -237,9 +240,9 @@ export function activate(context: vscode.ExtensionContext): void {
       );
       if (pick === apply) {
         applyCopilotSync(plan);
-        await vscode.window.showInformationMessage(msg("ext.applied"));
+        void vscode.window.showInformationMessage(msg("ext.applied"));
         if (plan.conflicts.length > 0) {
-          await vscode.window.showWarningMessage(msg("ext.conflicts", { names: plan.conflicts.join(", ") }));
+          void vscode.window.showWarningMessage(msg("ext.conflicts", { names: plan.conflicts.join(", ") }));
         }
       }
     } finally {
@@ -255,17 +258,19 @@ export function activate(context: vscode.ExtensionContext): void {
       language: "markdown",
     });
     await vscode.window.showTextDocument(doc);
+    // Returned so callers of executeCommand (the real-editor test) can read the report directly.
+    return doc;
   });
 
   reg("mcpUnison.exportClaude", async () => {
     const ws = workspaceDir();
     if (!ws) {
-      await vscode.window.showWarningMessage(msg("ext.noWorkspace"));
+      void vscode.window.showWarningMessage(msg("ext.noWorkspace"));
       return;
     }
     const file = path.join(ws, ".vscode", "mcp.json");
     if (!fs.existsSync(file)) {
-      await vscode.window.showWarningMessage(msg("ext.noVscodeFile"));
+      void vscode.window.showWarningMessage(msg("ext.noVscodeFile"));
       return;
     }
     const formatPick = await vscode.window.showQuickPick(["add-json", "mcp-json"], { placeHolder: "claude mcp add-json / .mcp.json" });
@@ -286,13 +291,13 @@ export function activate(context: vscode.ExtensionContext): void {
     });
     await vscode.window.showTextDocument(doc);
     if (formatPick === "mcp-json" && result.warnings.length > 0) {
-      await vscode.window.showWarningMessage(result.warnings.map((w) => `${w.code} ${w.server}`).join(", "));
+      void vscode.window.showWarningMessage(result.warnings.map((w) => `${w.code} ${w.server}`).join(", "));
     }
   });
 
   reg("mcpUnison.showInCopilotSessions", async () => {
     // No undocumented internal command is called: the documented workaround is a manual step.
-    await vscode.window.showInformationMessage(msg("ext.listServersHint"));
+    void vscode.window.showInformationMessage(msg("ext.listServersHint"));
   });
 
   reg("mcpUnison.chooseLanguage", async () => {
@@ -303,7 +308,7 @@ export function activate(context: vscode.ExtensionContext): void {
     const pick = await vscode.window.showQuickPick(items, { placeHolder: msg("ext.chooseLanguage.placeholder") });
     if (!pick) return;
     await cfg().update("language", pick.value, vscode.ConfigurationTarget.Global);
-    await vscode.window.showInformationMessage(t(pick.value as Lang, "ext.language.saved", { name: pick.label }));
+    void vscode.window.showInformationMessage(t(pick.value as Lang, "ext.language.saved", { name: pick.label }));
   });
 }
 
