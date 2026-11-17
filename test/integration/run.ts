@@ -16,7 +16,8 @@ async function main(): Promise<void> {
     await runTests({
       extensionDevelopmentPath: root,
       extensionTestsPath: path.join(__dirname, "suite"),
-      launchArgs: [project, "--disable-extensions"],
+      // --no-sandbox: Electron's sandbox helper fails on Ubuntu 24.04 runners (AppArmor blocks user namespaces).
+      launchArgs: [project, "--disable-extensions", "--no-sandbox", "--disable-gpu", "--disable-workspace-trust"],
       extensionTestsEnv: { HOME: fakeHome, USERPROFILE: fakeHome },
     });
   } finally {

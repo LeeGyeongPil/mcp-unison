@@ -29,10 +29,10 @@ The extension is not on a marketplace yet. Build the package from a clone and in
 git clone https://github.com/LeeGyeongPil/mcp-unison.git
 cd mcp-unison
 npm install
-npm run package          # writes mcp-unison-0.1.0.vsix
+npm run package          # writes mcp-unison-0.1.1.vsix
 ```
 
-Then in VS Code run **Extensions: Install from VSIX...** and pick `mcp-unison-0.1.0.vsix`.
+Then in VS Code run **Extensions: Install from VSIX...** and pick `mcp-unison-0.1.1.vsix`.
 
 The CLI works from the same clone:
 

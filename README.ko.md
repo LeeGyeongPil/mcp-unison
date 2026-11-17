@@ -29,10 +29,10 @@ Claude Code나 Codex에 이미 등록한 MCP 서버를 VS Code 채팅(Copilot)�
 git clone https://github.com/LeeGyeongPil/mcp-unison.git
 cd mcp-unison
 npm install
-npm run package          # mcp-unison-0.1.0.vsix 를 만듭니다
+npm run package          # mcp-unison-0.1.1.vsix 를 만듭니다
 ```
 
-VS Code에서 **Extensions: Install from VSIX...** 를 실행하고 `mcp-unison-0.1.0.vsix` 를 고릅니다.
+VS Code에서 **Extensions: Install from VSIX...** 를 실행하고 `mcp-unison-0.1.1.vsix` 를 고릅니다.
 
 CLI는 같은 clone에서 쓸 수 있습니다.
 
