@@ -176,6 +176,18 @@ export async function main(argv: readonly string[], io: CliIo): Promise<number> 
         project = demo.project;
         io.err(t(lang, "cli.demoNotice") + "\n");
       }
+      if (!args.demo) {
+        // Only explicitly given paths are validated; defaults keep today's behaviour.
+        const checks: Array<[string, string | undefined]> = [
+          ["--home", args.home === undefined ? undefined : path.resolve(io.cwd, args.home)],
+          ["--project", args.project === undefined ? undefined : project],
+        ];
+        for (const [flag, p] of checks) {
+          if (p !== undefined && !(fs.existsSync(p) && fs.statSync(p).isDirectory())) {
+            throw new UsageError("cli.err.badDir", { flag, path: p });
+          }
+        }
+      }
       const blocked = blockedSet(args.blockedVars);
       const set = await loadSources({ home, env: io.env, projectDir: project });
       const lock = readLock(set.paths.lockFile);

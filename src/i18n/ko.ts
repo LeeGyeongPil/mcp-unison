@@ -63,6 +63,7 @@ export const ko: Record<MessageKey, string> = {
   "cli.err.badFormat": "--format 은 mcp-json 또는 add-json 이어야 합니다 (받은 값: \"{value}\").",
   "cli.err.noCommand": "명령이 없습니다. mcp-unison --help 를 실행하세요.",
   "cli.err.demoMissing": "데모 홈 폴더를 {path} 에서 찾지 못했습니다. 패키지를 다시 설치하세요.",
+  "cli.err.badDir": "{flag} {path} 가 없거나 폴더가 아닙니다. 경로 오타를 확인하세요.",
   "cli.err.noVscodeFile": "{path} 가 없습니다. .vscode/mcp.json 을 만들거나 --project <폴더> 를 지정하세요.",
   "cli.err.prefix": "오류",
 

@@ -110,3 +110,22 @@ test("an empty home lists nothing without failing", (t) => {
   assert.equal(r.status, 0);
   assert.match(r.stdout, /No servers found/);
 });
+
+test("explicit --home that does not exist is a usage error (exit 2) naming the path", () => {
+  const bad = path.join("/nonexistent", "typo-home");
+  for (const cmd of [["diff", "--check"], ["list"], ["sync-copilot"], ["export-claude"]]) {
+    const r = runCli([...cmd, "--home", bad, "--lang", "en"]);
+    assert.equal(r.status, 2, cmd.join(" "));
+    assert.ok(r.stderr.includes(bad), r.stderr);
+  }
+});
+
+test("explicit --project that does not exist is a usage error (exit 2) naming the path", (t) => {
+  const { home } = copyDemo(t);
+  const bad = path.join("/nonexistent", "typo-proj");
+  for (const cmd of [["diff", "--check"], ["list"], ["sync-copilot"], ["export-claude"]]) {
+    const r = runCli([...cmd, "--home", home, "--project", bad, "--lang", "en"]);
+    assert.equal(r.status, 2, cmd.join(" "));
+    assert.ok(r.stderr.includes(bad), r.stderr);
+  }
+});

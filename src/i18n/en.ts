@@ -64,6 +64,7 @@ export const en = {
   "cli.err.badFormat": "--format must be mcp-json or add-json (got \"{value}\").",
   "cli.err.noCommand": "no command given. Run mcp-unison --help.",
   "cli.err.demoMissing": "demo home folder not found at {path}. Reinstall the package.",
+  "cli.err.badDir": "{flag} {path} does not exist or is not a directory. Check the path for typos.",
   "cli.err.noVscodeFile": "{path} does not exist. Create .vscode/mcp.json or pass --project <dir>.",
   "cli.err.prefix": "error",
 
