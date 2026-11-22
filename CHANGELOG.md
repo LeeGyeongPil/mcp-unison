@@ -3,6 +3,12 @@
 All notable changes to this project are documented here.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses [Semantic Versioning](https://semver.org/).
 
+## [0.1.4] - 2026-11-22
+
+### Security
+
+- Dev dependency update: the transitive `minimatch` (pulled in by the extension packaging tool) is pinned to 11.0.9 through `overrides`, removing a known advisory (GHSA-g3hv-75wg-m249). No runtime behavior change.
+
 ## [0.1.3] - 2026-11-18
 
 ### Fixed
